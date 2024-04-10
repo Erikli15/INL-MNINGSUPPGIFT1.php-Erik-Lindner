@@ -6,6 +6,8 @@ class userDitales
     public $userId;
     public $Name;
 
+    public $Email;
+
     public $StreetAddress;
     public $City;
     public $Zipcode;
