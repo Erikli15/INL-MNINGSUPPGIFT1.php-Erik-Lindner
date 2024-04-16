@@ -1,16 +1,19 @@
 <?php
+ob_start();
 require_once ('lib/PageTemplate.php');
 require_once ("Database.php");
+require_once ('vendor/autoload.php');
 
 $dbContext = new Database();
 $message = "";
 $username = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = $_POST['username'];
-    $password = $_POST['password']; // Hejsan123#
+    $password = $_POST['password'];
     try {
         $dbContext->getUserDatabas()->getAuth()
             ->login($username, $password);
+        ob_clean();
         header('Location: /');
         exit;
     } catch (Exception $e) {
@@ -18,7 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     }
 }
-# trick to execute 1st time, but not 2nd so you don't have an inf loop
+
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
     $TPL->PageTitle = "Login";

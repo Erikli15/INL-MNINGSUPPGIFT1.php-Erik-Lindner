@@ -1,5 +1,6 @@
 <?php
-require_once ("Utils/Validator.php");
+ob_start();
+require_once ('vendor/autoload.php');
 require_once ('lib/PageTemplate.php');
 require_once ('Database.php');
 
@@ -8,24 +9,23 @@ $dbContext = new Database();
 $message = "";
 $username = "";
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // TODO:Add validation - redan registrerad, password != passwordAgain
     $username = $_POST['username'];
-    $password = $_POST['password']; // Hejsan123#
+    $password = $_POST['password'];
     try {
         $userId = $dbContext->getUserDatabas()->getAuth()->register($username, $password, $username, function ($selector, $token) {
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
             $mail->isSMTP();
-            $mail->Host = 'smtp.ethereal.email';
-            $mail->SMTPAuth = true;
-            $mail->Username = 'rollin61@ethereal.email';
-            $mail->Password = '1XaAWE4ZkqfF69mYcQ';
-            $mail->SMTPSecure = 'tls';
-            $mail->Port = 587;
+            $mail->Host = $_ENV["Host"];
+            $mail->SMTPAuth = $_ENV["SMTPAuth"];
+            $mail->Username = $_ENV["Username"];
+            $mail->Password = $_ENV["Password"];
+            $mail->SMTPSecure = $_ENV["SMTPSecure"];
+            $mail->Port = $_ENV["Port"];
 
-            $mail->From = "stefans@superdupershop.com";
-            $mail->FromName = "Hello"; //To address and name 
-            $mail->addAddress("recepient1@example.com"); //Address to which recipient will reply 
-            $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply"); //CC and BCC 
+            $mail->From = "";
+            $mail->FromName = "Hello";
+            $mail->addAddress($_POST['username']);
+            $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply");
             $mail->isHTML(true);
             $mail->Subject = "Registrering";
             $url = 'http://localhost:5000/verify_email?selector=' . \urlencode($selector) . '&token=' . \urlencode($token);
@@ -33,17 +33,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->send();
 
         });
+        ob_end_clean();
         header('Location: /user/login');
         exit;
     } catch (Exception $e) {
-        throw $e;
         echo $e->getMessage();
-        exit;
-        $message = "Error";
     }
 }
 
-# trick to execute 1st time, but not 2nd so you don't have an inf loop
+
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
     $TPL->PageTitle = "Regsier";
