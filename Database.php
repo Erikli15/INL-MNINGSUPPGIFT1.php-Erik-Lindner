@@ -24,6 +24,15 @@ class Database
         $this->userDatabas = new userDatabas($this->pdo);
         $this->ifTabletNotExist();
     }
+
+    function addDetales($userId, $Name, $StreetAddress, $City, $Zipcode)
+    {
+        $prep = $this->pdo->prepare(
+            "INSERT INTO userDitales(userId, Name, StreetAddress, City, Zipcode) VALUES(:userId, :Name, :StreetAddress, :City, :Zipcode)"
+        );
+        $prep->execute(["userId" => $userId, "Name" => $Name, "StreetAddress" => $StreetAddress, "City" => $City, "Zipcode" => $Zipcode]);
+        return $this->pdo->lastInsertId();
+    }
     function ifTabletNotExist()
     {
 

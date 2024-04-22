@@ -68,7 +68,7 @@ $username = "";
                         } else {
                             ?>
                             <li class="nav-item">
-                                <a class="nav-link text-dark" href="/Account/Logout" title="Manage">Logout</a>
+                                <a class="nav-link text-dark" href="/AccountLogout.php" title="Manage">Logout</a>
                             </li>
                             <?php
                         }

@@ -13,7 +13,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
         $dbContext->getUserDatabas()->getAuth()
             ->login($username, $password);
-        ob_clean();
         header('Location: /');
         exit;
     } catch (Exception $e) {
