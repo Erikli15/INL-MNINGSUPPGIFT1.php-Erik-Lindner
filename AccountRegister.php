@@ -61,13 +61,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply");
             $mail->isHTML(true);
             $mail->Subject = "Registrering";
-            $url = 'http://localhost:5000/verify_email?selector=' . \urlencode($selector) . '&token=' . \urlencode($token);
+            $url = 'http://localhost:8000/verify_email.php?selector=' . \urlencode($selector) . '&token=' . \urlencode($token);
             $mail->Body = "<i>Hej, klicka på <a href='$url'>$url</a></i>";
             $mail->send();
 
         });
         $dbContext->addDetales($userId, $users->Name, $users->StreetAddress, $users->City, $users->Zipcode);
-        header('Location: /user/login');
+        header('Location: /thanks.php');
         exit;
     } catch (Exception $e) {
         echo $e->getMessage();
@@ -89,7 +89,7 @@ if (!isset($TPL)) {
     <div class="row">
         <div class="col-md-12">
             <div class="newsletter">
-                <p>User<strong>&nbsp;REGISTER</strong></p>
+                <p>User<strong>&nbsp;REGISTER</strong><?php echo $message ?></p>
                 <form method="POST">
                     <input class="input" type="email" placeholder="Enter Your Email" name="username">
                     <span><?php echo $v->get_error_message('username') ?></span>
@@ -115,7 +115,7 @@ if (!isset($TPL)) {
                     <span><?php echo $v->get_error_message('City') ?></span>
                     <br />
                     <br />
-                    <button class="newsletter-btn"><i class="fa fa-envelope"></i> Register</button>
+                    <button class="newsletter-btn"><i class="fa fa-envelope" href="/thanks.php"></i> Register</button>
                     <span><?php echo $v->get_error_message('') ?></span>
                 </form>
             </div>

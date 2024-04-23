@@ -5,8 +5,7 @@ require_once ('vendor/autoload.php');
 
 
 $dbContext = new Database();
-
-$username = "";
+$database = new Database();
 
 ?>
 
@@ -28,10 +27,7 @@ $username = "";
     <link rel="stylesheet" href="/css/font-awesome.min.css">
     <link type="text/css" rel="stylesheet" href="/css/style.css" />
     <link type="text/css" rel="stylesheet" href="/css/site.css" />
-    <!--[if lt IE 9]>
-      <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+
     <?php if (isset($TPL->ContentHead)) {
         include $TPL->ContentHead;
     } ?>
@@ -51,8 +47,8 @@ $username = "";
                 <ul class="header-links pull-right">
                     <ul class="navbar-nav">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" href="/Account/Manage"
-                                title="Manage"><?php echo $username ?></a>
+                            <a class="nav-link text-dark" href="/Account/Manage" title="Manage">
+                                <?php echo $database->getUserDatabas()->getAuth()->getUsername(); ?></a>
                         </li>
                         <?php
                         if (!$dbContext->getUserDatabas()->getAuth()->isLoggedIn()) {
