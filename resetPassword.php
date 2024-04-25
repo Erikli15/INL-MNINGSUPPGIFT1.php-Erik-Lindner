@@ -1,52 +1,63 @@
 <?php
+ob_start();
 require_once ('vendor/autoload.php');
 require_once ('Database.php');
 require_once ('Utils/Validator.php');
 require_once ('Utils/Mailer.php');
 
-if (!isset($_GET['code'])) {
-    exit("can't find the page");
+$dbContext = new Database();
+
+try {
+    if (isset($_GET['selector']) && !empty($_GET['selector']) && isset($_GET['token']) && !empty($_GET['token'])) {
+        echo 'Put the selector into a "hidden" field (or keep it in the URL)';
+        echo 'Put the token into a "hidden" field (or keep it in the URL)';
+
+        echo 'Ask the user for their new password';
+    }
+} catch (\Delight\Auth\InvalidSelectorTokenPairException $e) {
+    die('Invalid token');
+} catch (\Delight\Auth\TokenExpiredException $e) {
+    die('Token expired');
+} catch (\Delight\Auth\ResetDisabledException $e) {
+    die('Password reset is disabled');
+} catch (\Delight\Auth\TooManyRequestsException $e) {
+    die('Too many requests');
 }
+$auth = $dbContext->getUserDatabas()->getAuth();
 
-$host = "localhost";
-$user = "root";
-$pass = "root";
-$db = "stefanssupershopuserdb";
+if ($auth->canResetPassword($_GET['selector'], $_GET['token'])) {
+    echo 'Put the selector into a "hidden" field (or keep it in the URL)';
+    echo 'Put the token into a "hidden" field (or keep it in the URL)';
 
-$con = new mysqli($host, $user, $pass, $db);
-
-if ($con->connect_error) {
-    die("Connection failed: " . $con->connect_error);
+    echo 'Ask the user for their new password';
 }
+if (isset($_POST['password']) && !empty($_POST['password'])) {
 
+    try {
+        $auth = $dbContext->getUserDatabas()->getAuth();
 
-$code = $_GET['code'];
-$getCodequery = mysqli_query($con, "SELECT * FROM resetPasswords WHERE code = '$code'");
-if (mysqli_num_rows($getCodequery) == 0) {
-    exit("can't find the page because not same code");
-}
+        $auth->resetPassword($_POST['selector'], $_POST['token'], $_POST['password']);
 
-// handling the form 
-if (isset($_POST['password'])) {
-    $pw = $_POST['password'];
-    $pw = md5($pw); // not the best option but for demo simpilicity
-    $row = mysqli_fetch_array($getCodequery);
-    $email = $row['username'];
-    $query = mysqli_query($con, "UPDATE users SET password = '$pw' WHERE username = '$email'");
-
-    if ($query) {
-        $query = mysqli_query($con, "DELETE FROM resetPasswords WHERE code ='$code'");
-        exit('Password updated');
-    } else {
-        exit('Something went wrong :(');
+        echo 'Password has been reset';
+    } catch (\Delight\Auth\InvalidSelectorTokenPairException $e) {
+        die('Invalid token');
+    } catch (\Delight\Auth\TokenExpiredException $e) {
+        die('Token expired');
+    } catch (\Delight\Auth\ResetDisabledException $e) {
+        die('Password reset is disabled');
+    } catch (\Delight\Auth\InvalidPasswordException $e) {
+        die('Invalid password');
+    } catch (\Delight\Auth\TooManyRequestsException $e) {
+        die('Too many requests');
     }
 }
-
 
 ?>
 
 
 <form method="post">
+    <input type="hidden" name="selector" value="<?php echo $_GET['selector']; ?>">
+    <input type="hidden" name="token" value="<?php echo $_GET['token']; ?>">
     <input type="password" name="password" placeholder="New password">
     <br>
     <input type="submit" name="submit" value="Update password">

@@ -18,7 +18,7 @@ class Mailer
         $this->mailer->SMTPSecure = $_ENV["SMTPSecure"];
         $this->mailer->Port = $_ENV["Port"];
     }
-    public function sendMail($mailer, $subject, $body, $username)
+    public function sendMail($mailer, $subject, $body, $username, $selector, $token)
     {
         $this->mailer->From = "stefans@superdupershop.com";
         $this->mailer->FromName = "Hello";

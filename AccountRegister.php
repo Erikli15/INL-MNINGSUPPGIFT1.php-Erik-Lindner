@@ -54,7 +54,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $subject = "Registrering";
             $url = 'http://localhost:8000/verify_email.php?selector=' . \urlencode($selector) . '&token=' . \urlencode($token);
             $body = "<i>Hej, klicka på <a href='$url'>$url</a></i>";
-            $mailer->sendMail($mailer, $subject, $body, $username);
+            $mailer->sendMail($mailer, $subject, $body, $username, null, null);
             $mail->send();
             if (!$mail->send()) {
                 echo "Mailer Error: " . $mail->ErrorInfo;
@@ -66,7 +66,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             } else {
                 echo "Message has been sent successfully";
             }
-
         });
         $dbContext->addDetales($userId, $users->Name, $users->StreetAddress, $users->City, $users->Zipcode);
         header('Location: /thanks.php');
