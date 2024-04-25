@@ -16,8 +16,6 @@ $username = '';
 $v = new Validator($_POST);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = '';
-
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
@@ -58,7 +56,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $body = "<i>Hej, klicka på <a href='$url'>$url</a></i>";
             $mailer->sendMail($mailer, $subject, $body, $username);
             $mail->send();
-
             if (!$mail->send()) {
                 echo "Mailer Error: " . $mail->ErrorInfo;
             } else {
@@ -71,7 +68,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             }
 
         });
-
         $dbContext->addDetales($userId, $users->Name, $users->StreetAddress, $users->City, $users->Zipcode);
         header('Location: /thanks.php');
         exit;

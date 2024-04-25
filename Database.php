@@ -51,6 +51,13 @@ class Database
                 PRIMARY KEY (`id`)
                 ) ";
 
+        $sql = "CREATE TABLE IF NOT EXISTS`resetPasswords` (
+                `id` INT AUTO_INCREMENT PRIMARY KEY,
+                `code` VARCHAR(255) NOT NULL,
+                `username` VARCHAR(255) NOT NULL,
+                `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )";
+
         $this->pdo->exec($sql);
 
         $this->userDatabas->setUpUser();

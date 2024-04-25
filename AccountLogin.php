@@ -46,7 +46,7 @@ if (!isset($TPL)) {
                     <br />
                     <button class="newsletter-btn"><i class="fa fa-envelope"></i> Login</button>
                 </form>
-                <a href="">Lost password?</a>
+                <a href="forgotPassword.php">Lost password?</a>
             </div>
         </div>
     </div>
