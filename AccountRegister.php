@@ -4,20 +4,22 @@ require_once ('vendor/autoload.php');
 require_once ('lib/PageTemplate.php');
 require_once ('Database.php');
 require_once ('Utils/Validator.php');
-
+require_once ('Utils/Mailer.php');
 
 $dbContext = new Database();
 
 $users = new userDitales();
 
-$message = "";
-$username = "";
+$message = '';
+$username = '';
 
 $v = new Validator($_POST);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+    $username = '';
+
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
 
     $users->Name = $_POST['Name'];
     $users->StreetAddress = $_POST['StreetAddress'];
@@ -45,27 +47,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     try {
         $userId = $dbContext->getUserDatabas()->getAuth()->register($username, $password, $username, function ($selector, $token) {
+            $username = "";
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
-            $mail->isSMTP();
-            $mail->Host = $_ENV["Host"];
-            $mail->SMTPAuth = $_ENV["SMTPAuth"];
-            $mail->Username = $_ENV["Username"];
-            $mail->Password = $_ENV["Password"];
-            $mail->SMTPSecure = $_ENV["SMTPSecure"];
-            $mail->Port = $_ENV["Port"];
-
-
-            $mail->From = "";
-            $mail->FromName = "Hello";
-            $mail->addAddress($_POST["username"]);
+            $mailer = new Mailer($mail);
+            $mail->AllowEmpty = true;
+            $mail->addAddress($_POST['username']);
             $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply");
-            $mail->isHTML(true);
-            $mail->Subject = "Registrering";
+            $subject = "Registrering";
             $url = 'http://localhost:8000/verify_email.php?selector=' . \urlencode($selector) . '&token=' . \urlencode($token);
-            $mail->Body = "<i>Hej, klicka på <a href='$url'>$url</a></i>";
+            $body = "<i>Hej, klicka på <a href='$url'>$url</a></i>";
+            $mailer->sendMail($mailer, $subject, $body, $username);
             $mail->send();
 
+            if (!$mail->send()) {
+                echo "Mailer Error: " . $mail->ErrorInfo;
+            } else {
+                echo "Message has been sent successfully";
+            }
+            if (!$mail->send()) {
+                echo "Mailer Error: " . $mail->ErrorInfo;
+            } else {
+                echo "Message has been sent successfully";
+            }
+
         });
+
         $dbContext->addDetales($userId, $users->Name, $users->StreetAddress, $users->City, $users->Zipcode);
         header('Location: /thanks.php');
         exit;
@@ -73,7 +79,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         echo $e->getMessage();
     }
 }
-
 
 if (!isset($TPL)) {
     $TPL = new PageTemplate();
