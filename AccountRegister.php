@@ -49,12 +49,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $mail = new PHPMailer\PHPMailer\PHPMailer(true);
             $mailer = new Mailer($mail);
             $mail->AllowEmpty = true;
-            $mail->addAddress($_POST['username']);
             $mail->addReplyTo("noreply@ysuperdupershop.com", "No-Reply");
+            $mail->addAddress($_POST['username']);
             $subject = "Registrering";
             $url = 'http://localhost:8000/verify_email.php?selector=' . \urlencode($selector) . '&token=' . \urlencode($token);
-            $body = "<i>Hej, klicka på <a href='$url'>$url</a></i>";
-            $mailer->sendMail($mailer, $subject, $body, $username, null, null);
+            $body = "<i>Hej, klicka på <a href='$url'>$url</a>för varifera ditt konto oss oss</i>";
+            $mailer->sendMail($mailer, $subject, $body, $username, $selector, $token);
             $mail->send();
             if (!$mail->send()) {
                 echo "Mailer Error: " . $mail->ErrorInfo;
